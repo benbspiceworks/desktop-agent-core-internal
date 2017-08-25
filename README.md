@@ -1,5 +1,20 @@
 # desktop-agent-core-internal
 
+## Initial Setup
+This can likely be done in any VirtualBox host, but in macOS/Sierra (10.12)
+  * install latest VirtualBox
+  * Create a 2016 Server VM within VirtualBox
+
+In the Server 2016 VM:
+  * Install latest Docker
+  * Pull down Windows server core from docker:  
+  `docker pull microsoft/windowsservercore` (this should be vanilla Server 2016 with .Net 4.5)
+ 
+Note: looks like MSI requires WindowsServerCore, and can't be done with NanoServer. 
+ref. https://blog.sixeyed.com/how-to-dockerize-windows-applications/ 
+
+## Example docker build command
+
 Ex. docker build command where Dockerfile is stored at c:\build\Dockerfile
 
 `docker build -t desktop-agent c:\build --build-arg CLASSIC_AGENT_HOST=<IP or hostname of Desktop 8.0 server> --build-arg CLASSIC_AGENT_PORT=443 --build-arg CLASSIC_AGENT_KEY=<actual unencrypted key> --build-arg CLASSIC_AGENT_KEY_ENCRYPTED=False --build-arg DOWNLOAD_ZIP_URL="<https://path/to/windows.zip/containing/msi/packages>"`
