@@ -15,7 +15,7 @@ Assumes the .zip has folder structure:
 This agent module checks in with the Spiceworks Desktop (v8.0+) to create a new sample/test device record in the Inventory.
 
 ## Initial Setup
-This can likely be done in any VirtualBox host, but in macOS/Sierra (10.12)
+This can likely be done in any VirtualBox host. In macOS/Sierra (10.12):
   * install latest VirtualBox
   * Create a 2016 Server VM within VirtualBox
 
