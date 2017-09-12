@@ -19,7 +19,8 @@ $destination = \"C:\desktop-agent\" ; `
 Expand-Archive -Path $BackUpPath -DestinationPath $destination -Force;
 
 #run msi installation of agent
-RUN $args = \"/i C:\desktop-agent\dist\\"+ $Env:AGENT_VERSION +\"\win\SpiceworksAgentShell_classic-agent_\"+ $Env:AGENT_VERSION +\".msi /qn CLASSIC_AGENT_KEY=\" + $Env:CLASSIC_AGENT_KEY + \" CLASSIC_AGENT_KEY_ENCRYPTED=\" + $Env:CLASSIC_AGENT_KEY_ENCRYPTED + \" CLASSIC_AGENT_PORT=\" + $Env:CLASSIC_AGENT_PORT + \" CLASSIC_AGENT_HOST=\" + $Env:CLASSIC_AGENT_HOST + \" /lv install.log\"; `
+RUN $ver = $Env:AGENT_VERSION; `
+$args = \"/i C:\desktop-agent\dist\$ver\win\SpiceworksAgentShell_classic-agent_$ver.msi /qn CLASSIC_AGENT_KEY=\" + $Env:CLASSIC_AGENT_KEY + \" CLASSIC_AGENT_KEY_ENCRYPTED=\" + $Env:CLASSIC_AGENT_KEY_ENCRYPTED + \" CLASSIC_AGENT_PORT=\" + $Env:CLASSIC_AGENT_PORT + \" CLASSIC_AGENT_HOST=\" + $Env:CLASSIC_AGENT_HOST + \" /lv install.log\"; `
 Start-Process msiexec.exe -Wait -ArgumentList $args;
 
 #clean up, removing all msi installers
