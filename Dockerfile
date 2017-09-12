@@ -9,15 +9,23 @@ ARG DOWNLOAD_ZIP_URL
 
 SHELL ["powershell", "-Command"]
 
+#download windows.zip containing agent msi's
 RUN [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true} ; `
 (New-Object System.Net.WebClient).DownloadFile($Env:DOWNLOAD_ZIP_URL, 'windows.zip');
 
+#extract msis
 RUN $BackUpPath = \"C:\windows.zip\" ; `
 $destination = \"C:\desktop-agent\" ; `
 Expand-Archive -Path $BackUpPath -DestinationPath $destination -Force;
 
-RUN $args = \"/i C:\desktop-agent\dist\0.3.17\win\SpiceworksAgentShell_classic-agent_0.3.17.msi /qn CLASSIC_AGENT_KEY=\" + $Env:CLASSIC_AGENT_KEY + \" CLASSIC_AGENT_KEY_ENCRYPTED=\" + $Env:CLASSIC_AGENT_KEY_ENCRYPTED + \" CLASSIC_AGENT_PORT=\" + $Env:CLASSIC_AGENT_PORT + \" CLASSIC_AGENT_HOST=\" + $Env:CLASSIC_AGENT_HOST + \" /lv install.log\"; `
+#run msi installation of agent
+RUN $args = \"/i C:\desktop-agent\dist\\"+ $Env:AGENT_VERSION +\"\win\SpiceworksAgentShell_classic-agent_\"+ $Env:AGENT_VERSION +\".msi /qn CLASSIC_AGENT_KEY=\" + $Env:CLASSIC_AGENT_KEY + \" CLASSIC_AGENT_KEY_ENCRYPTED=\" + $Env:CLASSIC_AGENT_KEY_ENCRYPTED + \" CLASSIC_AGENT_PORT=\" + $Env:CLASSIC_AGENT_PORT + \" CLASSIC_AGENT_HOST=\" + $Env:CLASSIC_AGENT_HOST + \" /lv install.log\"; `
 Start-Process msiexec.exe -Wait -ArgumentList $args;
 
+#clean up, removing all msi installers
 RUN Remove-Item C:\desktop-agent -Recurse -Force; `
 Remove-Item C:\windows.zip;
+
+#startup and monitor agent service, ref. https://github.com/MicrosoftDocs/Virtualization-Documentation/tree/master/windows-server-container-tools/Wait-Service
+ADD https://raw.githubusercontent.com/MicrosoftDocs/Virtualization-Documentation/master/windows-server-container-tools/Wait-Service/Wait-Service.ps1 C:\Wait-Service.ps1
+ENTRYPOINT powershell.exe -file c:\Wait-Service.ps1 -ServiceName agentshellservice
