@@ -30,3 +30,12 @@ Remove-Item C:\windows.zip;
 #startup and monitor agent service, ref. https://github.com/MicrosoftDocs/Virtualization-Documentation/tree/master/windows-server-container-tools/Wait-Service
 ADD https://raw.githubusercontent.com/MicrosoftDocs/Virtualization-Documentation/master/windows-server-container-tools/Wait-Service/Wait-Service.ps1 C:\Wait-Service.ps1
 ENTRYPOINT powershell.exe -file c:\Wait-Service.ps1 -ServiceName agentshellservice
+
+#agent shell windows service status = container health
+HEALTHCHECK CMD powershell -command `  
+    try { `
+	$serviceInfo = service -name agentshellservice; `
+	$response = $serviceInfo.status -eq "Running"; `
+     if ($response) { return 0} `
+     else {return 1}; `
+    } catch { return 1 }
